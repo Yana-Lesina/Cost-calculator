@@ -36,15 +36,16 @@ let servicePrice1 = parseFloat(prompt('Сколько это будет стои
 let service2 = prompt('Какой дополнительный тип услуги нужен?', 'Услуга2');
 let servicePrice2 = parseFloat(prompt('Сколько это будет стоить?'));
 
-
+//Процент отката посреднику за работу
+let rollbkPercentg = fullPrice * (rollback/100);
 
 fullPrice = screenPrice + servicePrice1 + servicePrice2;
-let servicePercentPrice = Math.ceil(fullPrice - fullPrice * (rollback/100)); 
+let servicePercentPrice = Math.ceil(fullPrice - rollbkPercentg); 
 
 console.log('Стоимость верстки экранов ' + screenPrice + ' рублей/долларов/гривен/юани');
 console.log('Стоимость разработки сайта ' + fullPrice + ' рублей/долларов/гривен/юани');
 
-console.log('Процент отката посреднику за работу: ' + fullPrice * (rollback/100));
+console.log('Процент отката посреднику за работу: ' + rollbkPercentg);
 console.log('Итоговая стоимость за вычетом процента отката: ' + servicePercentPrice);
 
 
