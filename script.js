@@ -1,79 +1,98 @@
 'use strict';
 
-//Переменные 
-let title = prompt('Как называется ваш проект?', 'Новый проект');
+//============================================
+//  Переменные 
+//============================================
+let title = prompt('Как называется ваш проект?', ' КаЛьКулятор Верстки');
 let screens = prompt('Какие типы экранов нужно разработать?', 'Простые, Сложные, Интерактивные');
 let screenPrice = parseFloat(prompt('Сколько будет стоить данная работа?', '1200'));
-let rollback = 73;
-let fullPrice;
+let adaptive = prompt('Нужен ли адаптив на сайте?', 'да');
 
-let adaptive = prompt('Нужен ли адаптив на сайте?');
-//приведение переменной adaptive к булевому типу явным способом
-switch(adaptive) {
-    case 'да':
-    case 'Да':
-    case 'нужен':
-    case 'Нужен':
-      adaptive = true;
-      break;
-    case 'нет':
-    case 'Нет':
-    case 'не нужен':
-    case 'Не нужен':
-      adaptive = false;
-      break;
-    default: 
-      console.log('Некорректный ввод');
-      adaptive = false;
-      break;
-}
-
-
-//Задание дополнительных услуг
+//дополнительные услуги
 let service1 = prompt('Какой дополнительный тип услуги нужен?', 'Услуга1');
 let servicePrice1 = parseFloat(prompt('Сколько это будет стоить?'));
-
 let service2 = prompt('Какой дополнительный тип услуги нужен?', 'Услуга2');
 let servicePrice2 = parseFloat(prompt('Сколько это будет стоить?'));
+let allServicePrices;
 
-//Процент отката посреднику за работу
-let rollbkPercentg = fullPrice * (rollback/100);
+let fullPrice;
 
-fullPrice = screenPrice + servicePrice1 + servicePrice2;
-let servicePercentPrice = Math.ceil(fullPrice - rollbkPercentg); 
+let rollback = 10;
 
-console.log('Стоимость верстки экранов ' + screenPrice + ' рублей/долларов/гривен/юани');
-console.log('Стоимость разработки сайта ' + fullPrice + ' рублей/долларов/гривен/юани');
+let rollbkPercentg;//Процент отката посреднику за работу
+let servicePercentPrice;//Итог. сто-ть за вычетом процента отката
 
-console.log('Процент отката посреднику за работу: ' + rollbkPercentg);
-console.log('Итоговая стоимость за вычетом процента отката: ' + servicePercentPrice);
+//============================================
+//  Описание функций 
+//============================================
+
+const getAllServicePrices = function(srvPrice1, srvPrice2) {
+  return srvPrice1 + srvPrice2;
+};
+
+const getTitle = function(ttle) { 
+  ttle = ttle.trim().toLowerCase();
+  ttle = ttle[0].toUpperCase() + ttle.slice(1);
+ 
+  return ttle;
+};
 
 
-//Конструкция условий
-if(fullPrice >= 30000){
-    console.log('Даём скидку в 10%');
+const getServicePercentPrices = function(vFulPrice, rlbkPerstg) {
+  return Math.ceil(vFulPrice - rlbkPerstg);
+};
 
-} else if (fullPrice >= 15000 && fullPrice < 30000) {
-  console.log('Даем скидку в 5%');
 
-} else if (fullPrice >= 0 && fullPrice < 15000) {
-  console.log('Скидка не предусмотрена'); 
+const getRollbackMessage = function(price) {
+  if(price >= 30000){
+      return 'Даём скидку в 10%';
 
-} else {
-  console.log('Что то пошло не так:(');
+  } else if (price >= 15000 && price < 30000) {
+    return 'Даем скидку в 5%';
 
+  } else if (price >= 0 && price < 15000) {
+    return 'Скидка не предусмотрена'; 
+
+  } else {
+    return 'Что то пошло не так:(';
+  }
+};
+
+
+function getFullPrice(scrPrice, allSrvPrice) {
+  return scrPrice + allSrvPrice;
 }
 
 
+const showTypeOf = function(variable) {
+  console.log(variable, typeof variable);
+};
 
-//Вывод типа данных переменных
-console.log(typeof title);
-console.log(typeof fullPrice);
-console.log(typeof adaptive);
 
-//Вывод длины строки
-console.log(screens.length);
+//============================================
+//  Функционал 
+//============================================
+allServicePrices = getAllServicePrices(servicePrice1, servicePrice2);
 
-//Приведение строки screens к нижнему регистру и её разбиение на массив, вывести массив в консоль
-screens = screens.toLowerCase(); //приведение к регистру
+fullPrice = getFullPrice(screenPrice, allServicePrices);
+
+rollbkPercentg = fullPrice * (rollback/100);
+
+title = getTitle(title);
+
+servicePercentPrice = getServicePercentPrices(fullPrice, rollbkPercentg);
+
+
+//============================================
+//  Консолька 
+//============================================
+showTypeOf(title);
+showTypeOf(fullPrice);
+showTypeOf(adaptive);
+
+screens = screens.toLowerCase(); //приведение строки к нижнему регистру
 console.log(screens.split(', ')); //разбиение на массив
+
+console.log(getRollbackMessage(fullPrice));
+
+console.log(getServicePercentPrices(fullPrice, rollbkPercentg));
