@@ -20,16 +20,16 @@ const getElems = function(elems) {
 }
 
 
-const handlBtns = getElems(document.getElementsByClassName('handler_btn'))
-const screenBtn = document.querySelector('.screen-btn')
+const handlBtns = getElems(document.getElementsByClassName('handler_btn'));
+const screenBtn = document.querySelector('.screen-btn');
 
-const itemsPers = getElems(document.querySelectorAll('.other-items > .percent'))
-const itemsNum = getElems(document.querySelectorAll('.other-items > .number'))
+const itemsPers = getElems(document.querySelectorAll('.main-controls__views > .percent'));
+const itemsNum = getElems(document.querySelectorAll('.main-controls__views > .number'));
 
-const typeRange = document.querySelector('.rollback' + 'input')
-const rangeValue  = document.querySelector('.rollback' + 'span')
+const typeRange = document.querySelector('.rollback > .main-controls__range > input');
+const rangeValue  = document.querySelector('.rollback > .main-controls__range > span');
 
-const totalInputs = getElems(document.getElementsByClassName('total-input'))
+const totalInputs = getElems(document.getElementsByClassName('total-input'));
 
 let screens = (document.querySelectorAll('.screen'))[0]
 
@@ -169,15 +169,15 @@ const appData = {
     // console.log(appData.title)
     
 
-    console.log(appData.title)
-    console.log(handlBtns)
-    console.log(screenBtn)
-    console.log(itemsPers)
-    console.log(itemsNum)
-    console.log(typeRange)
-    console.log(rangeValue)
-    console.log(totalInputs)
-    console.log(screens)
+    console.log(appData.title);
+    console.log('handlBtns ', handlBtns);
+    console.log('screenBtn ', screenBtn);
+    console.log('itemsPers ', itemsPers);
+    console.log('itemsNum ', itemsNum);
+    console.log('typeRange ', typeRange);
+    console.log('rangeValue ', rangeValue);
+    console.log('totalInputs ', totalInputs);
+    console.log('screens ', screens);
   }
 }
 
