@@ -10,9 +10,33 @@ const isString = function (str) {
   //если isNaN = false то строку удалось перевести в число (она точно была вида "27436748274")
 }
 
+const getElems = function(elems) {
+  let arr = []
+  
+  for (let i = 0; i < elems.length; i++) {
+    arr[i] = elems[i]
+  }
+  return arr
+}
+
+
+const handlBtns = getElems(document.getElementsByClassName('handler_btn'))
+const screenBtn = document.querySelector('.screen-btn')
+
+const itemsPers = getElems(document.querySelectorAll('.other-items' + '.percent'))
+const itemsNum = getElems(document.querySelectorAll('.other-items' + '.number'))
+
+const typeRange = document.querySelector('.rollback ' + 'input')
+const rangeValue  = document.querySelector('.rollback ' + 'span')
+
+const totalInputs = getElems(document.getElementsByClassName('total-input'))
+
+let screens = (document.querySelectorAll('.screen'))[0]
+
+
 
 const appData = {
-  title: '',
+  title: [],
   screens: [],
   screenPrice: 0,
   adaptive: true,
@@ -37,9 +61,14 @@ const appData = {
 
   asking: function() {
 
-    do {
-      appData.title = prompt('Как называется ваш проект?', ' КаЛьКулятор Верстки')
-    } while (!isString(appData.title))
+    appData.title = (document.getElementsByTagName('h1'))[0].textContent
+    //сокращённо от 
+    //appData.title = document.getElementsByTagName('h1') 
+    //appData.title = appData.title[0].textContent
+    //----------------------------------
+    // do {
+    //   //appData.title = prompt('Как называется ваш проект?', ' КаЛьКулятор Верстки')
+    // } while (!isString(appData.title))
     
     
     for ( let i = 0; i < 2; i++ ) {   
@@ -74,7 +103,7 @@ const appData = {
 
       appData.services[name + i] = price //идентификатор = i, конкатенацией
 
-      console.log(appData.services)
+      //console.log(appData.services)
     }
 
     
@@ -133,10 +162,22 @@ const appData = {
     // for(let key in appData) {
     //   console.log('Ключ: ' + key + ' Значение: ' + appData[key])
     // }
-    console.log(appData.fullPrice)
-    console.log(appData.servicePercentPrice)
-    console.log(appData.screens)
-    console.log(appData.screenPrice)
+    // console.log(appData.fullPrice)
+    // console.log(appData.servicePercentPrice)
+    // console.log(appData.screens)
+    // console.log(appData.screenPrice)
+    // console.log(appData.title)
+    
+
+    console.log(appData.title)
+    console.log(handlBtns)
+    console.log(screenBtn)
+    console.log(itemsPers)
+    console.log(itemsNum)
+    console.log(typeRange)
+    console.log(rangeValue)
+    console.log(totalInputs)
+    console.log(screens)
   }
 }
 
