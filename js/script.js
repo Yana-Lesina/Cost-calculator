@@ -23,11 +23,11 @@ const getElems = function(elems) {
 const handlBtns = getElems(document.getElementsByClassName('handler_btn'))
 const screenBtn = document.querySelector('.screen-btn')
 
-const itemsPers = getElems(document.querySelectorAll('.other-items' + '.percent'))
-const itemsNum = getElems(document.querySelectorAll('.other-items' + '.number'))
+const itemsPers = getElems(document.querySelectorAll('.other-items > .percent'))
+const itemsNum = getElems(document.querySelectorAll('.other-items > .number'))
 
-const typeRange = document.querySelector('.rollback ' + 'input')
-const rangeValue  = document.querySelector('.rollback ' + 'span')
+const typeRange = document.querySelector('.rollback' + 'input')
+const rangeValue  = document.querySelector('.rollback' + 'span')
 
 const totalInputs = getElems(document.getElementsByClassName('total-input'))
 
