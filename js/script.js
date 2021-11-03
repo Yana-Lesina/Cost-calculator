@@ -1,20 +1,5 @@
 'use strict';
 
-// const isString = function (str) {
-//   return isNaN(+str);
-//   //если isNaN = true то действительно строка (вида "10фврпл", "дфывпр12843")
-//   //если isNaN = false то строку удалось перевести в число (она точно была вида "27436748274")
-// };
-
-// const getElems = function(elems) {
-//   let arr = [];
-  
-//   for (let i = 0; i < elems.length; i++) {
-//     arr[i] = elems[i];
-//   }
-//   return arr;
-// };
-
 const title = (document.getElementsByTagName('h1'))[0];
 const startBtn = document.getElementsByClassName('handler_btn')[0];
 const resetBtn = document.getElementsByClassName('handler_btn')[1];
@@ -34,33 +19,36 @@ const ttlWithRollback = document.getElementsByClassName('total-input')[4];
 
 let screens = document.querySelectorAll('.screen');
 
+const initFunc = function() {
+  this.addTitle();
+
+  const starter = this.ifCorrectThenStart.bind(appData);
+  startBtn.addEventListener('click', starter);
+
+  const resetter = this.reset.bind(appData);
+  resetBtn.addEventListener('click', resetter);
+
+  btnPlus.addEventListener('click', this.addScreenBlock);
+
+  const rlbkInstaller = this.instalRlbkValue.bind(appData);
+
+  typeRange.addEventListener('input', rlbkInstaller);
+};
+
 const appData = {
   title: '',
-  screens: [],
+  screens: [],//
   count: 0, //количество экранов всех типов
-  screenPrice: 0,
+  screenPrice: 0, //
   adaptive: true,
-  rollback: 0,
+  rollback: 0, 
   servicePricesPersent: 0,//
   servicePricesNumber: 0,//
   fullPrice: 0,
   servicePercentPrice: 0,
   servicesPersent: {},//
   servicesNumber: {},//
-  init: function() {
-    this.addTitle();
-
-    const starter = this.ifCorrectThenStart.bind(appData);
-    startBtn.addEventListener('click', starter);
-
-    const resetter = this.reset.bind(appData);
-    resetBtn.addEventListener('click', resetter);
-
-    btnPlus.addEventListener('click', this.addScreenBlock);
-
-    const rlbkInstaller = this.instalRlbkValue.bind(appData);
-    typeRange.addEventListener('input', rlbkInstaller);
-  },
+  init: initFunc,
 
 
   ifCorrectThenStart: function () {
@@ -96,9 +84,9 @@ const appData = {
     resetBtn.style.display = 'none';
 
     this.disableSetter(false); //
-    this.deleteRlbkValue(); //
+    this.removeRlbkValue(); //
     
-    this.deleteScreens();
+    this.removeScreens();
     this.removeScreenBlock();
     this.removeServices();
 
@@ -107,22 +95,22 @@ const appData = {
   }, 
 
 
-  disableSetter: function(toDisable) {
+  disableSetter: function(needDisable) {
     const select = document.querySelectorAll('[name="views-select"]');
     const inputs = document.querySelectorAll('.main-controls__input > input');
     const checkboxes = document.querySelectorAll('.main-controls__checkbox > input ');
 
-    const setArrDisable = (arr, toDisable )=> {
+    const setArrDisable = (arr, needDisable )=> {
       arr.forEach( elem => {
-        elem.disabled = toDisable;
+        elem.disabled = needDisable;
       });
     };
 
-    setArrDisable(select, toDisable);
-    btnPlus.disabled = toDisable;
-    setArrDisable(inputs, toDisable);
-    setArrDisable(checkboxes, toDisable);
-    typeRange.disabled = toDisable;
+    setArrDisable(select, needDisable);
+    btnPlus.disabled = needDisable;
+    setArrDisable(inputs, needDisable);
+    setArrDisable(checkboxes, needDisable);
+    typeRange.disabled = needDisable;
   },
 
   instalRlbkValue: function() {
@@ -130,10 +118,10 @@ const appData = {
     this.rollback = typeRange.value;
   },
 
-  deleteRlbkValue: function() {
+  removeRlbkValue: function() {
     typeRange.value = 0;
     rangeValue.textContent = '0%';
-    this.rollback = typeRange.value;
+    this.rollback = 0;
   },
 
   addTitle: function () {
@@ -146,6 +134,8 @@ const appData = {
     this.addPrices();
 
     this.showResult();
+
+    console.log(appData);
   }, 
 
   showResult: function() {
@@ -172,11 +162,6 @@ const appData = {
       const input = screen.querySelector('input');
       const selectName = select.options[select.selectedIndex].textContent;
 
-      // console.log('=====================');
-      // console.log(select);
-      // console.log(input);
-      // console.log(selectName);
-
       this.screens.push({
         id: index, 
         name: selectName, 
@@ -186,19 +171,16 @@ const appData = {
     });
   },
 
-  deleteScreens: function() {
+  removeScreens: function() {
     screens.forEach( (screen, index) => {
       const select = screen.querySelector('select');
       const input = screen.querySelector('input');
-      const selectName = select.options[select.selectedIndex];
 
-     
+      select.selectedIndex = 0;
+      input.value = 0;
     });
 
     this.screens.splice(0, this.screens.length);
-
-    
-
   },
 
   addServices: function() {
@@ -226,7 +208,18 @@ const appData = {
   },
 
   removeServices: function() {
-    
+    otherItemsPers.forEach( (item) => {
+      const check = item.querySelector('input[type=checkbox]');
+      if(check.checked) {check.checked = false;}
+    });
+
+    otherItemsNum.forEach( (item) => {
+      const check = item.querySelector('input[type=checkbox]');
+      if(check.checked) {check.checked = false;}
+    });
+
+    this.servicesPersent = {};
+    this.servicesNumber = {};
   },
 
   addScreenBlock: function() {
@@ -236,7 +229,12 @@ const appData = {
   },
 
   removeScreenBlock: function() {
-    
+    if(screens.length > 1) {
+      for(let i = 1; i < screens.length; i++) {
+        screens[i].remove();
+        screens = document.querySelectorAll('.screen'); //переопределение чтобы правильно считалась длина NodeList
+      };
+    }
   },
 
   addPrices: function() {
@@ -270,8 +268,8 @@ const appData = {
 
   removePrices: function() {
     this.screenPrice = 0;
-    this.servicePricesNumber = {};
-    this.servicePricesPersent = {};
+    this.servicePricesNumber = 0;
+    this.servicePricesPersent = 0;
     this.count = 0;
     this.fullPrice = 0;
     this.servicePercentPrice = 0;
@@ -283,6 +281,5 @@ const appData = {
 };
 
 
-appData.init();
-// const calc = this.init.bind(appData);
-// calc();
+const calc = initFunc.bind(appData);
+calc();
