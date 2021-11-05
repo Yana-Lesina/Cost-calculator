@@ -110,12 +110,13 @@ const appData = {
     btnPlus.disabled = needDisable;
     setArrDisable(inputs, needDisable);
     setArrDisable(checkboxes, needDisable);
-    typeRange.disabled = needDisable;
+    //typeRange.disabled = needDisable;
   },
 
   instalRlbkValue: function() {
     rangeValue.textContent = typeRange.value + '%';
     this.rollback = typeRange.value;
+    ttlWithRollback.value = Math.ceil(this.fullPrice - (this.fullPrice * (this.rollback/100)));//эквивалентно расчёту this.servicePercentPrice в методе addPrices
   },
 
   removeRlbkValue: function() {
