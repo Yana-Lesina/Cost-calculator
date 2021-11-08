@@ -11,6 +11,13 @@ const otherItemsNum = document.querySelectorAll('.main-controls__views > .number
 const typeRange = document.querySelector('.rollback > .main-controls__range > input');
 const rangeValue  = document.querySelector('.rollback > .main-controls__range > span');
 
+const cmsCheckbox = document.getElementById('cms-open');
+const cmsVarsBlock = document.querySelector('.hidden-cms-variants');
+
+const cmsSelect = document.getElementById('cms-select');
+const cmsInputBlock = document.querySelector('.hidden-cms-variants > .main-controls__input');
+const cmsInput = document.getElementById('cms-other-input');
+
 const ttlScreensPrice = document.getElementsByClassName('total-input')[0];
 const ttlScreensAmount = document.getElementsByClassName('total-input')[1];
 const ttlOtherServsPrice = document.getElementsByClassName('total-input')[2];
@@ -31,23 +38,26 @@ const initFunc = function() {
   btnPlus.addEventListener('click', this.addScreenBlock);
 
   const rlbkInstaller = this.instalRlbkValue.bind(appData);
-
   typeRange.addEventListener('input', rlbkInstaller);
+
+  const cmsStateChanger = this.changeCmsState.bind(appData);
+  cmsCheckbox.addEventListener('input', cmsStateChanger);
 };
 
 const appData = {
   title: '',
-  screens: [],//
+  screens: [],
   count: 0, //количество экранов всех типов
-  screenPrice: 0, //
+  screenPrice: 0, 
   adaptive: true,
   rollback: 0, 
-  servicePricesPersent: 0,//
-  servicePricesNumber: 0,//
+  servicePricesPersent: 0,
+  servicePricesNumber: 0,
+  cmsPersent: 0, //процент CMS
   fullPrice: 0,
   servicePercentPrice: 0,
-  servicesPersent: {},//
-  servicesNumber: {},//
+  servicesPersent: {},
+  servicesNumber: {},
   init: initFunc,
 
 
@@ -77,21 +87,23 @@ const appData = {
         alert('Данные не введены, расчёты невозможны\nВведите данные и всё будет в порядке!');
       } 
   },
-
   
   reset:  function() {
     startBtn.style.removeProperty('display');
     resetBtn.style.display = 'none';
 
-    this.disableSetter(false); //
-    this.removeRlbkValue(); //
+    this.disableSetter(false);
+    this.removeRlbkValue(); 
     
     this.removeScreens();
     this.removeScreenBlock();
     this.removeServices();
 
-    this.removePrices();//??
-    this.deleteResult();//
+    this.disableCms();//!!!!
+    this.removeCMSValue();//!!!!
+
+    this.removePrices();
+    this.deleteResult();
   }, 
 
 
@@ -116,13 +128,47 @@ const appData = {
   instalRlbkValue: function() {
     rangeValue.textContent = typeRange.value + '%';
     this.rollback = typeRange.value;
-    ttlWithRollback.value = Math.ceil(this.fullPrice - (this.fullPrice * (this.rollback/100)));//эквивалентно расчёту this.servicePercentPrice в методе addPrices
+    ttlWithRollback.value = this.fullPriceCounter();
   },
 
   removeRlbkValue: function() {
     typeRange.value = 0;
     rangeValue.textContent = '0%';
     this.rollback = 0;
+  },
+
+  changeCmsState: function() {
+
+    if(cmsCheckbox.checked) {
+      cmsVarsBlock.style.display = 'flex';
+    } else if(!cmsCheckbox.checked) {
+      this.disableCms();
+      this.removeCMSValue();
+    }
+
+    cmsSelect.addEventListener('input', () => {
+      
+      if(cmsSelect.value === 'other') {
+        cmsInputBlock.style.display = 'flex';
+
+      } else if(cmsSelect.value === '50') {
+        cmsInputBlock.style.display = 'none';
+
+      } else {
+        cmsInputBlock.style.display = 'none';
+      }
+    })
+
+    console.log('changeCmsState');
+    console.log(this);
+  },
+
+  disableCms: function() {
+    cmsCheckbox.checked = false;
+    cmsVarsBlock.style.display = 'none';
+    cmsSelect.selectedIndex = 0;
+    cmsInputBlock.style.display = 'none';
+    cmsInput.value = 0;
   },
 
   addTitle: function () {
@@ -132,6 +178,7 @@ const appData = {
   start: function() {
     this.addScreens();
     this.addServices();
+    this.addCMS();
     this.addPrices();
 
     this.showResult();
@@ -142,8 +189,8 @@ const appData = {
   showResult: function() {
     ttlScreensPrice.value = this.screenPrice;
     ttlScreensAmount.value = this.count;
-    ttlOtherServsPrice.value = this.servicePricesPersent + this.servicePricesNumber;
-    fullTtlPrice.value = this.fullPrice;
+    ttlOtherServsPrice.value = this.servicePricesPersent + this.servicePricesNumber; 
+    fullTtlPrice.value = this.fullPrice; //c учётом CMS
     ttlWithRollback.value = this.servicePercentPrice;
   },
 
@@ -223,6 +270,27 @@ const appData = {
     this.servicesNumber = {};
   },
 
+  addCMS: function() {
+    if(cmsSelect.value === 'other') {
+      this.cmsPersent = +cmsInput.value;
+      console.log('cmsSelect.value === "other"');
+
+    } else if(cmsSelect.value === '50') {
+      this.cmsPersent = +cmsSelect.value;
+      console.log('cmsSelect.value === "50"');
+
+    } else {
+      this.cmsPersent = 0;
+      console.log('else');
+    }
+  },
+
+  removeCMSValue: function() {
+    this.cmsPersent = 0;
+    console.log('removeCMSValue');
+    console.log(this);
+  },
+
   addScreenBlock: function() {
     const cloneScreen = screens[0].cloneNode(true);
     screens[screens.length - 1].after(cloneScreen);
@@ -263,8 +331,17 @@ const appData = {
       this.count += key.amount;
     }
 
-    this.fullPrice =  this.screenPrice + this.servicePricesPersent + this.servicePricesNumber;
-    this.servicePercentPrice = Math.ceil(this.fullPrice - (this.fullPrice * (this.rollback/100)));
+    this.fullPrice = this.fullPriceCounter();
+
+    this.servicePercentPrice = Math.ceil(this.fullPrice - (this.fullPrice * (this.rollback/100)) );
+  },
+
+  fullPriceCounter() {
+    this.fullPrice =  this.screenPrice + this.servicePricesPersent + this.servicePricesNumber; //без учёта CMS 
+    this.fullPrice = this.fullPrice + (this.fullPrice * (this.cmsPersent / 100)) //добавление процента CMS
+    
+    return this.fullPrice;
+    //fullPrice зависит от отката посреднику typeRange.value, который может изменяться => расчёт выделен в функцию
   },
 
   removePrices: function() {
